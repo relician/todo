@@ -1,0 +1,57 @@
+spring:
+  profiles:
+    active: beta
+  jpa:
+    show-sql: true
+  main:
+    allow-bean-definition-overriding: true
+
+---
+
+
+spring:
+  profiles: beta
+
+base:
+  cdnUrl: https://beta-cdn.lezhin.com
+  bucket: lz-comics
+
+contents:
+  datasource:
+    jdbcUrl: jdbc:mysql://dev-db2-proxy.lezhin.net:13306/lezhincomics_beta?useSSL=false
+    username: lezhincomics_dev
+    password: m5uZqU95shhdLcYJhWESXAqz2B28ZDvN
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+image:
+  datasource:
+    jdbcUrl: jdbc:mysql://scuderia.cluster-cmocp2gj1d1i.ap-northeast-2.rds.amazonaws.com:3306/lezhincomics_beta?useSSL=false
+    username: lezhincomics_svc
+    password: DkV3swbhxFug9gR8SuHPN4CzDrg4tmHy
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+
+---
+
+
+spring:
+  profiles: mirror
+
+base:
+  cdnUrl: https://mirror-cdn.lezhin.com
+  bucket: lz-banners
+
+contents:
+  datasource:
+    jdbcUrl: jdbc:mysql://mirror-proxy-us-west2.lezhin.net:13306/lezhincomics_mirror?useSSL=false
+    username: lezhincomics_dev
+    password: m5uZqU95shhdLcYJhWESXAqz2B28ZDvN
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+
+image:
+  datasource:
+    jdbcUrl: jdbc:mysql://52.78.117.29:27181/lezhincomics?useSSL=false
+    username: lezhincomics_svc
+    password: UB93h8AnJbyrjECBx79y2cPVj5GXNVat
+    driverClassName: com.mysql.cj.jdbc.Driver
