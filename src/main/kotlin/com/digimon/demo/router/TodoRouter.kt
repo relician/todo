@@ -1,7 +1,7 @@
-package com.digimon.demo.web.router
+package com.digimon.demo.router
 
-import com.digimon.demo.domain.todo.Card
-import com.digimon.demo.web.handler.TodoHandler
+import com.digimon.demo.domain.todo.Todo
+import com.digimon.demo.handler.TodoHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.server.RequestPredicates.path
@@ -16,7 +16,7 @@ import org.springframework.web.reactive.function.server.router
 class TodoRouter(private val handler: TodoHandler) {
 
     @Bean
-    fun routerFunction() = nest(path("/todo-list"),
+    fun routerFunction() = nest(path("/todos"),
             router {
                 listOf(
                         GET("/", ::all),
@@ -25,9 +25,9 @@ class TodoRouter(private val handler: TodoHandler) {
             })
 
     fun all(req: ServerRequest) = ServerResponse.ok()
-            .body<Card>(handler.getAll())
+            .body<List<Todo>>(handler.getAll())
 
     fun byId(req: ServerRequest) = ServerResponse.ok()
-            .body<Card>(handler.getById(req.pathVariable("id").toLong()))
+            .body<Todo>(handler.getById(req.pathVariable("id").toLong()))
 
 }
