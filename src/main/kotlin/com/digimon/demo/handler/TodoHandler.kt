@@ -6,6 +6,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.ServerResponse.*
 import org.springframework.web.reactive.function.server.body
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -16,16 +17,19 @@ import java.util.*
 @Component
 class TodoHandler(private val repo: TodoRepository) {
 
-    fun getAll(req: ServerRequest) = ServerResponse.ok()
+    fun getAll(req: ServerRequest) = ok()
+            .contentType(MediaType.APPLICATION_JSON)
             .body<List<Todo>>(Flux.just(repo.findAll()))
 
     fun getById(req: ServerRequest): Mono<ServerResponse> {
         val id = req.pathVariable("id").toLong()
-        return ServerResponse.ok().body<Todo>(Mono.justOrEmpty(repo.findById(id)))
+        return ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body<Todo>(Mono.justOrEmpty(repo.findById(id)))
     }
 
     fun save(req: ServerRequest): Mono<ServerResponse> {
-        return ServerResponse.ok()
+        return ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(req.bodyToMono(Todo::class.java)
                         .switchIfEmpty(Mono.empty())
@@ -41,7 +45,7 @@ class TodoHandler(private val repo: TodoRepository) {
     fun done(req: ServerRequest): Mono<ServerResponse> {
         val id = req.pathVariable("id").toLong()
 
-        return ServerResponse.ok()
+        return ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.justOrEmpty(repo.findById(id))
                         .switchIfEmpty(Mono.empty())
@@ -58,7 +62,7 @@ class TodoHandler(private val repo: TodoRepository) {
 
     fun delete(req: ServerRequest): Mono<ServerResponse> {
         val id = req.pathVariable("id").toLong()
-        return ServerResponse.ok()
+        return ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.justOrEmpty(repo.findById(id))
                         .switchIfEmpty(Mono.empty())
