@@ -20,12 +20,14 @@ class TodoHandler(private val repo: TodoRepository) {
     fun getAll(req: ServerRequest) = ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body<List<Todo>>(Flux.just(repo.findAll()))
+            .switchIfEmpty(notFound().build())
 
     fun getById(req: ServerRequest): Mono<ServerResponse> {
         val id = req.pathVariable("id").toLong()
         return ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body<Todo>(Mono.justOrEmpty(repo.findById(id)))
+                .switchIfEmpty(notFound().build())
     }
 
     fun save(req: ServerRequest): Mono<ServerResponse> {
@@ -39,7 +41,7 @@ class TodoHandler(private val repo: TodoRepository) {
                                 repo.save(todo)
                             }.then(Mono.just(todo))
                         }
-                )
+                ).switchIfEmpty(notFound().build())
     }
 
     fun done(req: ServerRequest): Mono<ServerResponse> {
@@ -57,7 +59,7 @@ class TodoHandler(private val repo: TodoRepository) {
                                 repo.save(todo)
                             }.then(Mono.just(todo))
                         }
-                )
+                ).switchIfEmpty(notFound().build())
     }
 
     fun delete(req: ServerRequest): Mono<ServerResponse> {
@@ -73,6 +75,7 @@ class TodoHandler(private val repo: TodoRepository) {
                             }.then(Mono.just(todo))
                         }
                 )
+                .switchIfEmpty(notFound().build())
     }
 
 
