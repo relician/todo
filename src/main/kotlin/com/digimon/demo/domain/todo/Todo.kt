@@ -15,15 +15,14 @@ class Todo {
     @Lob
     @NotNull
     @Column(name = "content")
-     var content: String? = null
+    var content: String? = null
 
-    @NotNull
-    @Column(name = "ordinal")
-     var ordinal: Int = 0
-
-    @Column(name = "modified_at")
-    var modifiedAt: LocalDateTime? = null
+    @Column(name = "done")
+    var done: Boolean = false
 
     @Column(name = "created_at")
-    var createdAt: LocalDateTime? = null
+    var createdAt: LocalDateTime = LocalDateTime.now()
+
+    @Column(name = "modified_at")
+    var modifiedAt: LocalDateTime = LocalDateTime.now()
 }
