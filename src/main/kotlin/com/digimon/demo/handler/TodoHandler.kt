@@ -30,7 +30,11 @@ class TodoHandler(private val repo: TodoRepository) {
                 .body(req.bodyToMono(Todo::class.java)
                         .switchIfEmpty(Mono.empty())
                         .filter(Objects::nonNull)
-                        .flatMap { todo -> Mono.fromCallable { repo.save(todo) }.then(Mono.just(todo)) }
+                        .flatMap { todo ->
+                            Mono.fromCallable {
+                                repo.save(todo)
+                            }.then(Mono.just(todo))
+                        }
                 )
     }
 
@@ -59,7 +63,12 @@ class TodoHandler(private val repo: TodoRepository) {
                 .body(Mono.justOrEmpty(repo.findById(id))
                         .switchIfEmpty(Mono.empty())
                         .filter(Objects::nonNull)
-                        .flatMap { todo -> Mono.fromCallable { repo.delete(todo) }.then(Mono.just(todo)) })
+                        .flatMap { todo ->
+                            Mono.fromCallable {
+                                repo.delete(todo)
+                            }.then(Mono.just(todo))
+                        }
+                )
     }
 
 
