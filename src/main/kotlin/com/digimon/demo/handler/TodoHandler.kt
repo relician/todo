@@ -8,7 +8,6 @@ import org.springframework.web.reactive.function.BodyInserters.fromObject
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.body
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.util.*
@@ -18,7 +17,7 @@ import java.util.*
 class TodoHandler(private val repo: TodoRepository) {
 
     fun getAll(req: ServerRequest) = ServerResponse.ok()
-            .body<List<Todo>>(Flux.just(repo.findAll()))
+            .body<List<Todo>>(Mono.justOrEmpty(repo.findAll()))
 
     fun getById(req: ServerRequest): Mono<ServerResponse> {
         val id = req.pathVariable("id").toLong()
@@ -43,7 +42,7 @@ class TodoHandler(private val repo: TodoRepository) {
                         repo.save(todo)
                     }
                 }
-                .flatMap { ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Flux.just(repo.findAll())) }
+                .flatMap { ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.justOrEmpty(repo.findAll())) }
     }
 
     fun delete(req: ServerRequest): Mono<ServerResponse> {
@@ -51,7 +50,7 @@ class TodoHandler(private val repo: TodoRepository) {
         return Mono.justOrEmpty(repo.findById(id))
                 .filter(Objects::nonNull)
                 .flatMap { todo -> Mono.fromCallable { repo.delete(todo) } }
-                .flatMap { ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Flux.just(repo.findAll())) }
+                .flatMap { ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.justOrEmpty(repo.findAll())) }
     }
 
 
