@@ -6,9 +6,9 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
-import org.springframework.web.reactive.function.server.ServerResponse.*
+import org.springframework.web.reactive.function.server.ServerResponse.notFound
+import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.body
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.util.*
@@ -19,7 +19,7 @@ class TodoHandler(private val repo: TodoRepository) {
 
     fun getAll(req: ServerRequest) = ok()
             .contentType(MediaType.APPLICATION_JSON)
-            .body<List<Todo>>(Flux.just(repo.findAll()))
+            .body<List<Todo>>(Mono.just(repo.findAll()))
             .switchIfEmpty(notFound().build())
 
     fun getById(req: ServerRequest): Mono<ServerResponse> {
