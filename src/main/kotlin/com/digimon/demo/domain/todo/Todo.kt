@@ -13,7 +13,6 @@ class Todo {
     var id: Long = 0
 
     @Lob
-    @NotNull
     @Column(name = "content")
     var content: String? = null
 
