@@ -17,66 +17,52 @@ import java.util.*
 @Component
 class TodoHandler(private val repo: TodoRepository) {
 
-    fun getAll(req: ServerRequest) = ok()
+    fun getAll(req: ServerRequest): Mono<ServerResponse> = ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body<List<Todo>>(Mono.just(repo.findAll()))
             .switchIfEmpty(notFound().build())
 
-    fun getById(req: ServerRequest): Mono<ServerResponse> {
-        val id = req.pathVariable("id").toLong()
-        return ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body<Todo>(Mono.justOrEmpty(repo.findById(id)))
-                .switchIfEmpty(notFound().build())
-    }
+    fun getById(req: ServerRequest): Mono<ServerResponse> = ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body<Todo>(Mono.justOrEmpty(repo.findById(req.pathVariable("id").toLong())))
+            .switchIfEmpty(notFound().build())
 
-    fun save(req: ServerRequest): Mono<ServerResponse> {
-        return ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(req.bodyToMono(Todo::class.java)
-                        .switchIfEmpty(Mono.empty())
-                        .filter(Objects::nonNull)
-                        .flatMap { todo ->
-                            Mono.fromCallable {
-                                repo.save(todo)
-                            }.then(Mono.just(todo))
-                        }
-                ).switchIfEmpty(notFound().build())
-    }
+    fun save(req: ServerRequest): Mono<ServerResponse> = ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(req.bodyToMono(Todo::class.java)
+                    .switchIfEmpty(Mono.empty())
+                    .filter(Objects::nonNull)
+                    .flatMap { todo ->
+                        Mono.fromCallable {
+                            repo.save(todo)
+                        }.then(Mono.just(todo))
+                    }
+            ).switchIfEmpty(notFound().build())
 
-    fun done(req: ServerRequest): Mono<ServerResponse> {
-        val id = req.pathVariable("id").toLong()
+    fun done(req: ServerRequest): Mono<ServerResponse> = ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.justOrEmpty(repo.findById(req.pathVariable("id").toLong()))
+                    .switchIfEmpty(Mono.empty())
+                    .filter(Objects::nonNull)
+                    .flatMap { todo ->
+                        Mono.fromCallable {
+                            todo.done = true
+                            todo.modifiedAt = LocalDateTime.now()
+                            repo.save(todo)
+                        }.then(Mono.just(todo))
+                    }
+            ).switchIfEmpty(notFound().build())
 
-        return ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.justOrEmpty(repo.findById(id))
-                        .switchIfEmpty(Mono.empty())
-                        .filter(Objects::nonNull)
-                        .flatMap { todo ->
-                            Mono.fromCallable {
-                                todo.done = true
-                                todo.modifiedAt = LocalDateTime.now()
-                                repo.save(todo)
-                            }.then(Mono.just(todo))
-                        }
-                ).switchIfEmpty(notFound().build())
-    }
-
-    fun delete(req: ServerRequest): Mono<ServerResponse> {
-        val id = req.pathVariable("id").toLong()
-        return ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.justOrEmpty(repo.findById(id))
-                        .switchIfEmpty(Mono.empty())
-                        .filter(Objects::nonNull)
-                        .flatMap { todo ->
-                            Mono.fromCallable {
-                                repo.delete(todo)
-                            }.then(Mono.just(todo))
-                        }
-                )
-                .switchIfEmpty(notFound().build())
-    }
-
-
+    fun delete(req: ServerRequest): Mono<ServerResponse> = ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.justOrEmpty(repo.findById(req.pathVariable("id").toLong()))
+                    .switchIfEmpty(Mono.empty())
+                    .filter(Objects::nonNull)
+                    .flatMap { todo ->
+                        Mono.fromCallable {
+                            repo.delete(todo)
+                        }.then(Mono.just(todo))
+                    }
+            )
+            .switchIfEmpty(notFound().build())
 }
