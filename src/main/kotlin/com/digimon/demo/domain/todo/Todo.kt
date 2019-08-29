@@ -24,5 +24,5 @@ class Todo {
     var createdAt: LocalDateTime = LocalDateTime.now()
 
     @Column(name = "modified_at")
-    var modifiedAt: LocalDateTime = LocalDateTime.now()
+    var modifiedAt: LocalDateTime = createdAt
 }
