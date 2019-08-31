@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.digimon</groupId>
-	<artifactId>todo1</artifactId>
+	<artifactId>todo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>todo1</name>
+	<name>todo</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
